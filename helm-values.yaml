@@ -1,0 +1,53 @@
+server:
+  # Disabilita la modalità dev (in-memory)
+  dev:
+    enabled: false
+
+  # StatefulSet con storage persistente
+  dataStorage:
+    enabled: true
+    size: 10Gi        # dimensione PVC
+    storageClass: standard  # sostituisci con il tuo storageClass se diverso
+
+  # Numero di repliche per HA
+  ha:
+    enabled: false     # metti true solo se vuoi 3 repliche (RAFT HA)
+    replicas: 1
+
+injector:
+  enabled: true        # abilita il sidecar injector
+  # opzionale: webhook logging
+  logLevel: info
+
+# Configurazioni opzionali del server Vault
+serverConfig:
+  # Integrated Storage Raft
+  storage:
+    raft:
+      path: "/vault/data"
+  listener:
+    tcp:
+      address: "0.0.0.0:8200"
+      tls_disable: 1   # solo dev / test, in prod usa TLS
+  ui: true
+
+# Abilita RBAC
+rbac:
+  create: true
+
+# Risorse pod (modificabile se cluster piccolo)
+resources:
+  server:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# Per abilitare l'autounseal (opzionale, cloud KMS)
+# unseal:
+#   awsKms:
+#     enabled: true
+#     region: "us-east-1"
+#     kmsKeyId: "xxxxx"
