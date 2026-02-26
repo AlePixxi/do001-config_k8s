@@ -3,16 +3,34 @@ pipeline {
 
     parameters {
         string(
-            name            : 'SERVICE NAME',
+            name            : 'SERVICE_NAME',
             description     : 'Enter the name of the service to deploy',
         )
         string(
-            name            : 'IMAGE TAG',
+            name            : 'IMAGE_TAG',
             description     : 'Enter the image tag to deploy',
         )
     }
 
     stages {
+        stage('Clear workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+        
+        stage('Install Kustomize') {
+            steps {
+                sh '''
+                    mkdir -p $HOME/bin
+                    curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+                    mv kustomize $HOME/bin/
+                    export PATH=$HOME/bin:$PATH
+                    kustomize version
+                '''
+            }
+        }
+        
         stage('Checkout') {
             steps {
                 git branch: 'main',
@@ -23,7 +41,10 @@ pipeline {
 
         stage('Update image tag') {
             steps {
-                sh "kustomize edit set image list_products=${params.SERVICE_NAME}:${params.IMAGE_TAG}"
+                sh """
+                    export PATH=$HOME/bin:$PATH
+                    kustomize edit set image list_products=${params.SERVICE_NAME}:${params.IMAGE_TAG}
+                """
             }
         }
 
@@ -41,7 +62,10 @@ pipeline {
 
         stage ('Deploy to Kubernetes') {
             steps {
-                sh "kubectl apply -k services/${params.SERVICE_NAME}/base"
+                sh """
+                    export PATH=$HOME/bin:$PATH
+                    kubectl apply -k services/${params.SERVICE_NAME}/base
+                """
             }
         }
     }
