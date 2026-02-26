@@ -17,7 +17,7 @@ pipeline {
             steps {
                 git branch: 'main',
                 credentialsId: 'credentialsgithu',
-                url: 'git@github.com:AlePixxi/do001-config_k8s.git'
+                url: 'https://github.com/AlePixxi/do001-config_k8s.git'
             }
         }
 
