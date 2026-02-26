@@ -4,12 +4,16 @@ kind: Kustomization
 namespace: e-comm
 
 resources:
-  - ../../../base/
-  - deployment.yaml
-  - service.yaml
+- ../../../base/
+- deployment.yaml
+- service.yaml
 
 configMapGenerator:
-  - name: config-map
-    behavior: merge
-    envs:
-      - configMap.properties
+- behavior: merge
+  envs:
+  - configMap.properties
+  name: config-map
+images:
+- name: list_products
+  newName: list_products
+  newTag: main.10
