@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "postgres-admin-role"
+        vault.hashicorp.com/agent-inject-secret-postgres-user: "secret/data/postgres-admin"
+        vault.hashicorp.com/agent-inject-template-postgres-user: |
+          {{- with secret "secret/data/postgres-admin" -}}
+          {{ .Data.data.username }}
+          {{- end }}
+
+        vault.hashicorp.com/agent-inject-secret-postgres-password: "secret/data/postgres-admin"
+        vault.hashicorp.com/agent-inject-template-postgres-password: |
+          {{- with secret "secret/data/postgres-admin" -}}
+          {{ .Data.data.password }}
+          {{- end }}
+      labels:
+        app: database
+    spec:
+      serviceAccountName: postgres-sa
+      containers:
+        - name: database
+          images:
+            - name: list_products
+              newTag: "latest"
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER_FILE
+              value: /vault/secrets/postgres-user
+            - name: POSTGRES_PASSWORD_FILE
+              value: /vault/secrets/postgres-password
