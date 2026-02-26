@@ -23,7 +23,7 @@ pipeline {
 
         stage('Update image tag') {
             steps {
-                kustomize edit set image list_products=${params.SERVICE_NAME}:${params.IMAGE_TAG}
+                sh "kustomize edit set image list_products=${params.SERVICE_NAME}:${params.IMAGE_TAG}"
             }
         }
 
