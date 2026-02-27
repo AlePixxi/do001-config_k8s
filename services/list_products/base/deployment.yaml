@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: database
+  name: list-products
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: database
+      app: list-products
   template:
     metadata:
       annotations:
@@ -24,14 +24,12 @@ spec:
           {{ .Data.data.password }}
           {{- end }}
       labels:
-        app: database
+        app: list-products
     spec:
       serviceAccountName: postgres-sa
       containers:
-        - name: database
-          images:
-            - name: list_products
-              newTag: "latest"
+        - name: list-products
+          image: list_products:latest
           ports:
             - containerPort: 5432
           env:
