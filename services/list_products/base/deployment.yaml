@@ -29,7 +29,7 @@ spec:
       serviceAccountName: postgres-sa
       containers:
         - name: list-products
-          image: list_products:latest
+          image: list-products:latest
           ports:
             - containerPort: 5432
           env:
