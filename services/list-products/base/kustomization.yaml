@@ -14,6 +14,6 @@ configMapGenerator:
   - configMap.properties
   name: config-map
 images:
-- name: list_products
+- name: list-products
   newName: list-products
   newTag: main.14
