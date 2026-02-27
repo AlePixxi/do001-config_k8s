@@ -16,4 +16,4 @@ configMapGenerator:
 images:
 - name: list_products
   newName: list_products
-  newTag: main.10
+  newTag: main.12
